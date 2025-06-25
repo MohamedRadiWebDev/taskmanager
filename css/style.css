@@ -38,6 +38,14 @@ body {
     overflow-x: hidden;
 }
 
+* {
+    box-sizing: border-box;
+}
+
+.container {
+    overflow-x: hidden;
+}
+
 body::before {
     content: '';
     position: fixed;
@@ -264,14 +272,13 @@ body::before {
         0 15px 40px rgba(139, 92, 246, 0.3),
         0 5px 15px rgba(6, 182, 212, 0.2),
         inset 0 1px 0 rgba(255, 255, 255, 0.6);
-    transform: translateY(-6px) scale(1.03) rotateY(2deg) rotateX(1deg);
+    transform: translateY(-6px) scale(1.02);
     border-color: rgba(139, 92, 246, 0.5);
     background: linear-gradient(135deg, 
         rgba(255, 255, 255, 0.95) 0%, 
         rgba(139, 92, 246, 0.05) 50%,
         rgba(255, 255, 255, 0.9) 100%);
     backdrop-filter: blur(12px) brightness(1.1);
-    padding-left: 2rem;
     border-radius: 20px;
     pointer-events: auto;
 }
@@ -1317,18 +1324,19 @@ body::before {
     /* Filter tabs mobile optimization */
     .task-filters .nav-pills {
         display: flex;
-        overflow-x: auto;
-        white-space: nowrap;
+        flex-wrap: wrap;
+        gap: 6px;
         padding-bottom: 0.5rem;
-        -webkit-overflow-scrolling: touch;
+        overflow: visible;
     }
     
     .task-filters .nav-pills .nav-link {
-        flex-shrink: 0;
-        padding: 10px 16px;
-        margin-right: 6px;
-        font-size: 0.9rem;
+        flex: 1;
+        padding: 10px 12px;
+        margin: 0;
+        font-size: 0.85rem;
         min-width: auto;
+        text-align: center;
     }
     
     /* Task list mobile enhancements */
@@ -1343,7 +1351,8 @@ body::before {
     }
     
     .task-card:hover {
-        padding-left: 16px; /* Reduce hover padding on mobile */
+        transform: translateY(-2px) scale(1.01); /* Reduce transform on mobile */
+        padding-left: 16px; /* Keep same padding on mobile */
     }
     
     /* Task card content mobile layout */
