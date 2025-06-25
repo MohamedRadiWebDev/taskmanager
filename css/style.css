@@ -273,6 +273,7 @@ body::before {
     backdrop-filter: blur(12px) brightness(1.1);
     padding-left: 2rem;
     border-radius: 20px;
+    pointer-events: auto;
 }
 
 .task-card:hover::before {
@@ -554,6 +555,9 @@ body::before {
     display: flex;
     align-items: center;
     gap: 8px;
+    position: relative;
+    z-index: 99;
+    pointer-events: auto;
 }
 
 .task-actions {
@@ -561,6 +565,9 @@ body::before {
     gap: 4px;
     opacity: 0;
     transition: opacity 0.2s ease;
+    position: relative;
+    z-index: 100;
+    pointer-events: auto;
 }
 
 .task-card:hover .task-actions {
@@ -581,6 +588,9 @@ body::before {
     justify-content: center;
     width: 36px;
     height: 36px;
+    position: relative;
+    z-index: 101;
+    pointer-events: auto;
 }
 
 .task-action-btn:hover {
