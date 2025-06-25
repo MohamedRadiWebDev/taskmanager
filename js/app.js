@@ -391,10 +391,10 @@ class TaskManager {
                     
                     // Get initial task position for truck starting point
                     const initialTaskRect = taskEl.getBoundingClientRect();
-                    truck.initialLeft = -70; // Start from far left of screen
+                    truck.initialLeft = window.innerWidth + 70; // Start from far right of screen
                     truck.taskTop = initialTaskRect.top + initialTaskRect.height / 2 - 15;
                     
-                    // Position truck initially off-screen to the left
+                    // Position truck initially off-screen to the right
                     truck.style.left = truck.initialLeft + 'px';
                     truck.style.top = truck.taskTop + 'px';
                     truck.style.display = 'block';
@@ -409,11 +409,11 @@ class TaskManager {
                 const translateX = Math.max(deltaX, -250); // Limit drag distance
                 taskEl.style.transform = `translateX(${translateX}px)`;
                 
-                // Position truck to move with the slide - starts from far left screen edge
-                // and moves right proportionally with the drag (reversed direction)
+                // Position truck to move with the slide - starts from far right screen edge
+                // and moves left proportionally with the drag (same direction as slide)
                 const dragProgress = Math.abs(translateX) / 250; // Progress from 0 to 1
-                const truckStartX = -70; // Start position (off-screen left)
-                const truckEndX = window.innerWidth + 100; // End position (off-screen right)
+                const truckStartX = window.innerWidth + 70; // Start position (off-screen right)
+                const truckEndX = -100; // End position (off-screen left)
                 const truckX = truckStartX + (truckEndX - truckStartX) * dragProgress;
                 const truckY = truck.taskTop;
                 
@@ -458,10 +458,10 @@ class TaskManager {
                 // Reset position with smooth transition
                 taskEl.style.transform = 'translateX(0)';
                 
-                // Animate truck back to left side
+                // Animate truck back to right side
                 if (truck) {
                     truck.style.transition = 'left 0.3s ease';
-                    truck.style.left = '-70px';
+                    truck.style.left = (window.innerWidth + 70) + 'px';
                     setTimeout(() => {
                         if (truck.style) truck.style.transition = 'none';
                     }, 300);
@@ -505,7 +505,7 @@ class TaskManager {
         
         truck.innerHTML = `
             <div class="truck-container">
-                <img src="images/truck.svg" alt="Truck" width="50" height="30" class="truck-svg">
+                <img src="images/truck.svg" alt="Truck" width="50" height="30" class="truck-svg" style="transform: scaleX(-1);">
                 <div class="dust-effect">
                     <div class="dust-particle"></div>
                     <div class="dust-particle"></div>
