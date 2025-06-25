@@ -30,6 +30,11 @@ class TaskManager {
         
         // Initialize category filter options
         this.updateCategoryFilter();
+        
+        // Start periodic notifications automatically when app loads
+        setTimeout(() => {
+            window.audioManager.startPeriodicNotifications();
+        }, 2000); // Wait 2 seconds after app loads
     }
 
     bindEvents() {
@@ -95,10 +100,35 @@ class TaskManager {
     }
 
     logout() {
+        // Stop periodic notifications when logging out
+        window.audioManager.stopPeriodicNotifications();
+        
         localStorage.removeItem('taskManagerUser');
         localStorage.removeItem('taskManagerTasks');
         this.tasks = [];
         this.showLogin();
+    }
+
+    toggleNotifications() {
+        const isActive = window.audioManager.togglePeriodicNotifications();
+        const button = document.getElementById('notificationToggle');
+        const icon = button.querySelector('i');
+        
+        if (isActive) {
+            button.classList.remove('btn-outline-secondary');
+            button.classList.add('btn-success');
+            icon.className = 'fas fa-bell';
+            button.title = 'Notifications ON (every 5 min) - Click to turn off';
+        } else {
+            button.classList.remove('btn-success');
+            button.classList.add('btn-outline-secondary');
+            icon.className = 'fas fa-bell-slash';
+            button.title = 'Notifications OFF - Click to turn on';
+        }
+        
+        // Show feedback
+        const message = isActive ? 'Periodic notifications enabled (every 5 minutes)' : 'Periodic notifications disabled';
+        this.showInAppNotification(message, 'info');
     }
 
     toggleDaysOfWeek(recurrence) {

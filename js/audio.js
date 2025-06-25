@@ -9,6 +9,7 @@ class AudioManager {
         this.sounds = {};
         this.prioritySounds = {};
         this.isEnabled = true;
+        this.notificationInterval = null;
     }
 
     async init() {
@@ -189,6 +190,37 @@ class AudioManager {
             this.playPrioritySound('notification');
         } else {
             this.playSound('complete');
+        }
+    }
+
+    startPeriodicNotifications() {
+        // Clear any existing interval
+        this.stopPeriodicNotifications();
+        
+        // Set up new interval to play notification every 5 minutes (300,000 ms)
+        this.notificationInterval = setInterval(() => {
+            this.playNotificationSound();
+            console.log('Periodic notification played');
+        }, 300000); // 5 minutes = 300,000 milliseconds
+        
+        console.log('Periodic notifications started (every 5 minutes)');
+    }
+
+    stopPeriodicNotifications() {
+        if (this.notificationInterval) {
+            clearInterval(this.notificationInterval);
+            this.notificationInterval = null;
+            console.log('Periodic notifications stopped');
+        }
+    }
+
+    togglePeriodicNotifications() {
+        if (this.notificationInterval) {
+            this.stopPeriodicNotifications();
+            return false; // notifications stopped
+        } else {
+            this.startPeriodicNotifications();
+            return true; // notifications started
         }
     }
 }
