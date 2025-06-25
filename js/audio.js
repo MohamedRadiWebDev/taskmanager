@@ -10,6 +10,7 @@ class AudioManager {
         this.prioritySounds = {};
         this.isEnabled = true;
         this.notificationInterval = null;
+        this.currentPrioritySources = [];
     }
 
     async init() {
@@ -151,6 +152,9 @@ class AudioManager {
         }
 
         try {
+            // Stop any currently playing priority sounds first
+            this.stopCurrentPrioritySounds();
+
             // Resume AudioContext if suspended
             if (this.audioContext.state === 'suspended') {
                 await this.audioContext.resume();
@@ -160,10 +164,37 @@ class AudioManager {
             source.buffer = this.prioritySounds[soundName];
             source.connect(this.audioContext.destination);
             source.start();
+
+            // Track this source so we can stop it later
+            if (!this.currentPrioritySources) {
+                this.currentPrioritySources = [];
+            }
+            this.currentPrioritySources.push(source);
+
+            // Remove from tracking when it ends
+            source.onended = () => {
+                const index = this.currentPrioritySources.indexOf(source);
+                if (index > -1) {
+                    this.currentPrioritySources.splice(index, 1);
+                }
+            };
         } catch (error) {
             console.warn('Failed to play priority sound:', error);
             // Fallback to generated sound
             this.playSound('add');
+        }
+    }
+
+    stopCurrentPrioritySounds() {
+        if (this.currentPrioritySources) {
+            this.currentPrioritySources.forEach(source => {
+                try {
+                    source.stop();
+                } catch (error) {
+                    // Source might already be stopped
+                }
+            });
+            this.currentPrioritySources = [];
         }
     }
 
