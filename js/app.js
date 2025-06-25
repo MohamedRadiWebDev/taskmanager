@@ -121,8 +121,8 @@ class TaskManager {
         // Update category filter options
         this.updateCategoryFilter();
         
-        // Play add sound and show animation
-        window.audioManager.playAddSound();
+        // Play priority-specific add sound and show animation
+        window.audioManager.playAddSound(task.priority);
         this.showTaskAnimation('add');
         
         // Add task to DOM with animation

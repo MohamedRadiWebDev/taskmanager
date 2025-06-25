@@ -7,6 +7,7 @@ class AudioManager {
     constructor() {
         this.audioContext = null;
         this.sounds = {};
+        this.prioritySounds = {};
         this.isEnabled = true;
     }
 
@@ -15,6 +16,7 @@ class AudioManager {
             // Create AudioContext on first user interaction
             this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
             await this.createSounds();
+            await this.loadPrioritySounds();
         } catch (error) {
             console.warn('Audio not supported or failed to initialize:', error);
             this.isEnabled = false;
@@ -29,6 +31,33 @@ class AudioManager {
         } catch (error) {
             console.warn('Failed to create sounds:', error);
             this.isEnabled = false;
+        }
+    }
+
+    async loadPrioritySounds() {
+        try {
+            const soundFiles = {
+                high: 'sound/High Priority.mp3',
+                medium: 'sound/Medium Priority.mp3',
+                low: 'sound/Low Priority.mp3',
+                add: 'sound/Add Task.mp3',
+                notification: 'sound/Notification Sound.mp3'
+            };
+
+            for (const [priority, filePath] of Object.entries(soundFiles)) {
+                try {
+                    const response = await fetch(filePath);
+                    if (response.ok) {
+                        const arrayBuffer = await response.arrayBuffer();
+                        const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+                        this.prioritySounds[priority] = audioBuffer;
+                    }
+                } catch (error) {
+                    console.warn(`Failed to load ${priority} sound:`, error);
+                }
+            }
+        } catch (error) {
+            console.warn('Failed to load priority sounds:', error);
         }
     }
 
@@ -113,8 +142,38 @@ class AudioManager {
         }
     }
 
-    playAddSound() {
-        this.playSound('add');
+    async playPrioritySound(soundName) {
+        if (!this.isEnabled || !this.audioContext || !this.prioritySounds[soundName]) {
+            // Fallback to generated sounds
+            this.playSound('add');
+            return;
+        }
+
+        try {
+            // Resume AudioContext if suspended
+            if (this.audioContext.state === 'suspended') {
+                await this.audioContext.resume();
+            }
+
+            const source = this.audioContext.createBufferSource();
+            source.buffer = this.prioritySounds[soundName];
+            source.connect(this.audioContext.destination);
+            source.start();
+        } catch (error) {
+            console.warn('Failed to play priority sound:', error);
+            // Fallback to generated sound
+            this.playSound('add');
+        }
+    }
+
+    playAddSound(priority = null) {
+        if (priority && this.prioritySounds[priority]) {
+            this.playPrioritySound(priority);
+        } else if (this.prioritySounds['add']) {
+            this.playPrioritySound('add');
+        } else {
+            this.playSound('add');
+        }
     }
 
     playCompleteSound() {
@@ -123,5 +182,13 @@ class AudioManager {
 
     playDeleteSound() {
         this.playSound('delete');
+    }
+
+    playNotificationSound() {
+        if (this.prioritySounds['notification']) {
+            this.playPrioritySound('notification');
+        } else {
+            this.playSound('complete');
+        }
     }
 }
