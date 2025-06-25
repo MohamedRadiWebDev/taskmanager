@@ -54,6 +54,14 @@ class TaskManager {
         document.getElementById('recurrence').addEventListener('change', (e) => {
             this.toggleDaysOfWeek(e.target.value);
         });
+
+        // Priority change - play sound preview
+        document.getElementById('taskPriority').addEventListener('change', (e) => {
+            const priority = e.target.value;
+            if (priority && window.audioManager) {
+                window.audioManager.playPrioritySound(priority);
+            }
+        });
     }
 
     checkSession() {
