@@ -505,7 +505,7 @@ class TaskManager {
         
         truck.innerHTML = `
             <div class="truck-container">
-                <img src="images/truck.svg" alt="Truck" width="50" height="30" class="truck-svg" style="transform: scaleX(-1);">
+                <img src="images/truck.svg" alt="Truck" width="50" height="30" class="truck-svg">
                 <div class="dust-effect">
                     <div class="dust-particle"></div>
                     <div class="dust-particle"></div>
